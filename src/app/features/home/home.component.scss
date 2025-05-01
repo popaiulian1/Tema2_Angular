@@ -84,30 +84,144 @@
     button[nz-button]{
         margin-right: 8px;
         border-radius: 8px;
-        transition: all 0.3s;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        border: none; // Remove default border
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.14);
+
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+
+        &:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active{
+            transform: translateY(0px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
         &[nzType="primary"] {
-            background: #1890ff;
-            border-color: #1890ff;
-            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+            background: linear-gradient(135deg, #0072ff, #00c6ff);
+            color: white;
             
             &:hover {
-              background: #40a9ff;
-              border-color: #40a9ff;
+                background: linear-gradient(135deg, #00a1ff, #00d8ff);
+            }
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            &:hover::before {
+                opacity: 1;
+            } 
+            
+            &::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 5px;
+                height: 5px;
+                background: rgba(255, 255, 255, 0.7);
+                opacity: 0;
+                border-radius: 100%;
+                transform: scale(1, 1) translate(-50%);
+                transform-origin: 50% 50%;
+            }
+
+            &:focus:not(:active)::after {
+                animation: ripple 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
             }
         }
 
         &[nzType="default"] {
-            border-color: #d9d9d9;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             
             &:hover {
-              color: #40a9ff;
-              border-color: #40a9ff;
+                color: #0072ff;
+                background-color: rgba(0, 114, 255, 0.05);
+                border-color: #0072ff;
             }
+        }
+
+        &[nzType="danger"] {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white;
+            
+            &:hover {
+                background: linear-gradient(135deg, #ff6b81, #ff7f8e);
+            }
+        }
+        
+        .anticon {
+            vertical-align: -0.125em;
+            margin-right: 4px;
         }
     }
 
     .action-buttons {
         white-space: nowrap;
+        display: flex;
+        justify-content: flex-start;
+        
+        button {
+            margin-right: 8px;
+            padding: 0 12px;
+            height: 32px;
+            
+            &:last-child {
+                margin-right: 0;
+            }
+            
+            &.ant-btn-icon-only {
+                border-radius: 12px;
+                width: 32px;
+                height: 32px;
+                padding: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                
+                // Cool hover effect for icon buttons
+                &:hover {
+                    transform: scale(1.1);
+                }
+                
+                &:active {
+                    transform: scale(0.95);
+                }
+            }
+        }
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 1;
+    }
+    35% {
+        transform: scale(25, 25);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(100, 100);
+        opacity: 0;
     }
 }
