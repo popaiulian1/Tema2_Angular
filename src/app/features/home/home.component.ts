@@ -10,16 +10,19 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { UserData } from '../../core/user.interface';
 import { UserDataService } from '../../core/user.service';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, 
     NzTableModule, NzButtonModule, NzFormModule, NzInputModule, 
-    NzModalModule, NzDatePickerModule, NzIconModule],
+    NzModalModule, NzDatePickerModule, NzIconModule, NzCardModule, NzToolTipModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
+
 export class HomeComponent implements OnInit {
   users: UserData[] = [];
   isModalVisible = false;
@@ -61,8 +64,36 @@ export class HomeComponent implements OnInit {
     this.isModalVisible = true;
   }
 
-  handleCancel(): void{
+  handleCancel(): void {
     this.isModalVisible = false;
+  }
+
+  handleOk(): void{
+    if(this.userForm.valid){
+      const formData = this.userForm.value;
+
+      if (this.isEditMode && this.currentUserId) {
+        const updatedUser: UserData = {
+          id: this.currentUserId,
+          ...formData
+        };
+        this.userDataService.updateUser(updatedUser);
+      } else {
+        const newUser: UserData = {
+          id: this.userDataService.getNewId(),
+          ...formData
+        };
+        this.userDataService.addUser(newUser);
+      }
+      this.isModalVisible = false;
+    } else {
+      Object.values(this.userForm.controls).forEach(control => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity();
+        }
+      })
+    }
   }
 
 }
