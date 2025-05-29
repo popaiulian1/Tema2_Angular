@@ -36,18 +36,20 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let user of basicTable.data">
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.phoneNumber }}</td>
-                    <td>{{ user.address }}</td>
-                    <td>{{ user.dateOfBirth | date: 'shortDate' }}</td>
-                    <td class="action-buttons">
-                        <button nz-button nzType="primary" nzGhost (click)="showEditModal(user)">
-                            Edit
-                        </button>
-                    </td>
+                @for (user of basicTable.data; track user.id){
+                <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phoneNumber }}</td>
+                        <td>{{ user.address }}</td>
+                        <td>{{ user.dateOfBirth | date: 'shortDate' }}</td>
+                        <td class="action-buttons">
+                            <button nz-button nzType="primary" nzGhost (click)="showEditModal(user)">
+                                Edit
+                            </button>
+                        </td>
                 </tr>
+                }
             </tbody>
         </nz-table>
     </nz-card>
@@ -116,12 +118,16 @@
                     <nz-form-label [nzSpan]="6" nzRequired>Date of Birth</nz-form-label>
                     <nz-form-control [nzSpan]="18" nzErrorTip="Please select the date of birth!">
                         <nz-date-picker formControlName="dateOfBirth" [nzPlaceHolder]="'Select date'" ></nz-date-picker>
-                        <ng-container *ngIf="userForm.get('dateOfBirth')?.hasError('required')">
-                            Please select the date of birth!
-                        </ng-container>
-                        <ng-container *ngIf="userForm.get('dateOfBirth')?.hasError('underage')">
-                            User must be at least 18 years old
-                        </ng-container>
+                        @if (userForm.get('dateOfBirth')?.hasError('required')){
+                            <ng-container>
+                                Please select the date of birth!
+                            </ng-container>
+                        }
+                        @if (userForm.get('dateOfBirth')?.hasError('underage')){
+                            <ng-container >
+                                User must be at least 18 years old
+                            </ng-container>
+                        }
                     </nz-form-control>
                 </nz-form-item>
             </form>
