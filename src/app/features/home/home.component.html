@@ -1,18 +1,29 @@
 <div class="container">
     <div class="header">
-        <h1> User Data Table </h1>
-        <button nz-button nzType="primary" (click)="showAddModal()">
-            <span nz-icon nzType="plus-outline"></span> 
-            Add User
-        </button>
+        <div class="pagination-top">
+            <nz-pagination 
+                [nzPageIndex]="pageIndex"
+                [nzPageSize]="pageSize"
+                [nzTotal]="users.length"
+                [nzPageSizeOptions]="[8, 16, 24]"
+                (nzPageIndexChange)="onPageIndexChange($event)"
+                (nzPageSizeChange)="onPageSizeChange($event)">
+            </nz-pagination>
+        </div>
+        <h1>User Data Table</h1>
+        <div class="action-buttons-top">
+            <button nz-button nzType="primary" (click)="showAddModal()">
+                Add User
+            </button>
+        </div>
     </div>
 
     <nz-card [nzBordered]="false">
         <nz-table 
             #basicTable 
-            [nzData]="users"
-            [nzShowSizeChanger]="true"
-            [nzPageSizeOptions]="[5, 10, 20]"
+            [nzData]="displayedUsers"
+            [nzFrontPagination]="false"
+            [nzShowPagination]="false"
             nzBordered>
             <thead>
                 <tr>
@@ -32,8 +43,8 @@
                     <td>{{ user.address }}</td>
                     <td>{{ user.dateOfBirth | date: 'shortDate' }}</td>
                     <td class="action-buttons">
-                        <button nz-button nzType="primary" nzGhost (click)="showEditModal(user)" nzTooltipTitle="Edit User" nzTooltipPlacement="top" nz-tooltip title="Edit User">
-                            <span nz-icon nzType="edit-outline"></span>
+                        <button nz-button nzType="primary" nzGhost (click)="showEditModal(user)">
+                            Edit
                         </button>
                     </td>
                 </tr>
@@ -47,7 +58,10 @@
         (nzOnCancel)="handleCancel()"
         (nzOnOk)="handleOk()"
         [nzOkText]="isEditMode ? 'Update' : 'Create'"
-        [nzWidth]="500">
+        [nzWidth]="600"
+        [nzCentered]="true"
+        [nzMaskClosable]="false"
+        [nzMask]="true">
         <ng-container *nzModalContent>
             <form nz-form [formGroup]="userForm" nzLayout="horizontal">
                 <nz-form-item>
@@ -57,7 +71,7 @@
                             <input nz-input formControlName="name" placeholder="Enter your name" />
                         </nz-input-group>
                         <ng-template #userIcon>
-                            <span nz-icon nzType="user"></span>
+                            <nz-icon nzType="user" nzTheme="outline" />
                         </ng-template>
                     </nz-form-control>
                 </nz-form-item>
@@ -69,7 +83,7 @@
                             <input nz-input formControlName="email" placeholder="Email" type="email" />
                         </nz-input-group>
                         <ng-template #emailIcon>
-                            <span nz-icon nzType="mail"></span>
+                            <nz-icon nzType="mail" nzTheme="outline" />
                         </ng-template>
                     </nz-form-control>
                 </nz-form-item>
@@ -81,7 +95,7 @@
                             <input nz-input formControlName="phoneNumber" placeholder="Phone Number" />
                         </nz-input-group>
                         <ng-template #phoneIcon>
-                            <span nz-icon nzType="phone"></span>
+                            <nz-icon nzType="phone" nzTheme="outline" />
                         </ng-template>
                     </nz-form-control>
                 </nz-form-item>
@@ -93,7 +107,7 @@
                             <input nz-input formControlName="address" placeholder="Address" />
                         </nz-input-group>
                         <ng-template #addressIcon>
-                            <span nz-icon nzType="home"></span>
+                            <nz-icon nzType="home" nzTheme="outline" />
                         </ng-template>
                     </nz-form-control>
                 </nz-form-item>
@@ -101,7 +115,13 @@
                 <nz-form-item>
                     <nz-form-label [nzSpan]="6" nzRequired>Date of Birth</nz-form-label>
                     <nz-form-control [nzSpan]="18" nzErrorTip="Please select the date of birth!">
-                        <nz-date-picker formControlName="dateOfBirth" [nzPlaceHolder]="'Select date'"></nz-date-picker>
+                        <nz-date-picker formControlName="dateOfBirth" [nzPlaceHolder]="'Select date'" ></nz-date-picker>
+                        <ng-container *ngIf="userForm.get('dateOfBirth')?.hasError('required')">
+                            Please select the date of birth!
+                        </ng-container>
+                        <ng-container *ngIf="userForm.get('dateOfBirth')?.hasError('underage')">
+                            User must be at least 18 years old
+                        </ng-container>
                     </nz-form-control>
                 </nz-form-item>
             </form>
